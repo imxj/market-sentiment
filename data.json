@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-03-30 21:28:16",
-  "updated_at_iso": "2026-03-30T21:28:16.843633",
+  "updated_at": "2026-03-30 21:35:54",
+  "updated_at_iso": "2026-03-30T21:35:54.073736",
   "fragility_score": 41.2,
   "red_count": 5,
   "yellow_count": 4,
@@ -275,7 +275,7 @@
       "signal": "green",
       "percentile": 7.1,
       "sparkline": [
-        2.7491,
+        2.7492,
         3.7189,
         3.0384,
         2.3515,
