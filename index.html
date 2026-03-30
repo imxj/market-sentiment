@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Sentiment Dashboard</title>
+<style>
+:root {
+  --bg-primary: #0a0e17;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2332;
+  --border: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --green: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.1);
+  --green-border: rgba(16, 185, 129, 0.3);
+  --yellow: #f59e0b;
+  --yellow-bg: rgba(245, 158, 11, 0.1);
+  --yellow-border: rgba(245, 158, 11, 0.3);
+  --red: #ef4444;
+  --red-bg: rgba(239, 68, 68, 0.1);
+  --red-border: rgba(239, 68, 68, 0.3);
+  --accent: #3b82f6;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 30px 0 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 30px;
+}
+
+.header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+}
+
+.updated-at {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 8px;
+}
+
+/* Fragility Score */
+.fragility-section {
+  text-align: center;
+  padding: 30px;
+  margin-bottom: 30px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.fragility-score {
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.fragility-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.fragility-bar-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  height: 8px;
+  background: #1e293b;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.fragility-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease, background 0.5s ease;
+}
+
+.signal-summary {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.signal-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.signal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Extreme Banner */
+.extreme-banner {
+  display: none;
+  background: linear-gradient(135deg, #7f1d1d, #991b1b);
+  color: white;
+  text-align: center;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  animation: pulse-red 2s infinite;
+  border: 2px solid #ef4444;
+}
+
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); }
+}
+
+/* Category Headers */
+.category-section {
+  margin-bottom: 24px;
+}
+
+.category-title {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  padding-left: 4px;
+}
+
+/* Indicator Grid */
+.indicators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+/* Indicator Card */
+.indicator-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.indicator-card:hover {
+  background: var(--bg-card-hover);
+  transform: translateY(-1px);
+}
+
+.indicator-card.signal-green {
+  border-left: 3px solid var(--green);
+}
+
+.indicator-card.signal-yellow {
+  border-left: 3px solid var(--yellow);
+}
+
+.indicator-card.signal-red {
+  border-left: 3px solid var(--red);
+  background: var(--red-bg);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.card-name {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.card-signal {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.card-signal.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+.card-signal.yellow { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
+.card-signal.red { background: var(--red); box-shadow: 0 0 8px var(--red); animation: glow-red 1.5s infinite; }
+
+@keyframes glow-red {
+  0%, 100% { box-shadow: 0 0 8px var(--red); }
+  50% { box-shadow: 0 0 16px var(--red); }
+}
+
+.card-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.card-value.green { color: var(--green); }
+.card-value.yellow { color: var(--yellow); }
+.card-value.red { color: var(--red); }
+
+/* Percentile Bar */
+.percentile-container {
+  margin-bottom: 10px;
+}
+
+.percentile-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.percentile-bar-bg {
+  width: 100%;
+  height: 4px;
+  background: #1e293b;
+  border-radius: 2px;
+  position: relative;
+}
+
+.percentile-marker {
+  position: absolute;
+  top: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  border: 2px solid var(--bg-card);
+}
+
+/* Sparkline */
+.sparkline-container {
+  height: 30px;
+  margin-bottom: 8px;
+}
+
+.sparkline-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Acceleration */
+.acceleration {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.accel-arrow {
+  font-size: 0.8rem;
+}
+
+/* Description tooltip */
+.card-description {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+  display: none;
+}
+
+.indicator-card:hover .card-description {
+  display: block;
+}
+
+/* Methodology */
+.methodology {
+  margin-top: 40px;
+  padding: 24px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.methodology h3 {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.methodology p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  margin-bottom: 8px;
+}
+
+.methodology .quote {
+  border-left: 2px solid var(--accent);
+  padding-left: 12px;
+  margin: 16px 0;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 20px 0;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { padding: 12px; }
+  .header h1 { font-size: 1.2rem; }
+  .fragility-score { font-size: 3rem; }
+  .indicators-grid {
+    grid-template-columns: 1fr;
+  }
+  .signal-summary { gap: 16px; font-size: 0.8rem; }
+  .card-value { font-size: 1.3rem; }
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>📊 Market Sentiment Dashboard</h1>
+    <div class="subtitle">Institutional-Grade Market Fragility Monitor</div>
+    <div class="updated-at" id="updatedAt">Loading...</div>
+  </div>
+
+  <div class="extreme-banner" id="extremeBanner">
+    ⚠️ EXTREME FRAGILITY — REDUCE EXPOSURE ⚠️
+  </div>
+
+  <div class="fragility-section" id="fragilitySection">
+    <div class="fragility-label">Market Fragility Score</div>
+    <div class="fragility-score" id="fragilityScore">--</div>
+    <div class="fragility-bar-container">
+      <div class="fragility-bar" id="fragilityBar"></div>
+    </div>
+    <div class="signal-summary" id="signalSummary">
+      <span class="signal-count"><span class="signal-dot" style="background:var(--green)"></span> <span id="greenCount">-</span> Green</span>
+      <span class="signal-count"><span class="signal-dot" style="background:var(--yellow)"></span> <span id="yellowCount">-</span> Yellow</span>
+      <span class="signal-count"><span class="signal-dot" style="background:var(--red)"></span> <span id="redCount">-</span> Red</span>
+    </div>
+  </div>
+
+  <div id="indicatorsContainer">
+    <div class="loading">
+      <div class="loading-spinner"></div>
+      Loading market data...
+    </div>
+  </div>
+
+  <div class="methodology">
+    <h3>📐 Methodology</h3>
+    <div class="quote">
+      "机构不预测事件，机构管理脆弱性。"<br>
+      — Institutions don't predict events. They manage fragility.
+    </div>
+    <p><strong>Fragility Score (0-100):</strong> Composite of all 16 indicators. Red signals contribute 100%, yellow 40%, green 0%. Score ≥75 = high fragility. ≥12 red signals triggers extreme warning.</p>
+    <p><strong>Percentile Rank:</strong> Each indicator's current value ranked against its 252-day (1-year) history. 90th percentile = higher than 90% of readings in the past year.</p>
+    <p><strong>Acceleration:</strong> The rate of change of the rate of change. Measures whether momentum is building or fading — the institutional edge over retail who only look at direction.</p>
+    <p><strong>Signal Logic:</strong> Thresholds combine absolute levels (e.g., VIX >25) with percentile positioning. No single indicator determines action — fragility emerges when multiple signals align.</p>
+    <p><strong>Data Sources:</strong> Yahoo Finance (VIX, ETFs, indices), calculated proxies for credit spreads, sentiment, and leverage. Updated weekdays at 7:00 AM and 12:30 PM PT.</p>
+    <p><strong>⚠️ Disclaimer:</strong> This dashboard is for informational purposes only. Not financial advice. Past indicator patterns do not guarantee future results.</p>
+  </div>
+
+  <div class="footer">
+    Built with 🐯 by Cutie | Data refreshed weekdays 7:00 AM & 12:30 PM PT
+  </div>
+</div>
+
+<script>
+const CATEGORIES_ORDER = [
+  "Volatility & Fear",
+  "Credit & Bonds",
+  "Equity Internals",
+  "Leverage & Positioning",
+  "Fund Flows & Sentiment",
+  "Macro"
+];
+
+function drawSparkline(canvas, data, signal) {
+  if (!data || data.length < 2) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width = canvas.offsetWidth * 2;
+  const h = canvas.height = canvas.offsetHeight * 2;
+  ctx.scale(2, 2);
+  const W = w / 2, H = h / 2;
+  
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || 1;
+  
+  const colors = {
+    green: '#10b981',
+    yellow: '#f59e0b',
+    red: '#ef4444'
+  };
+  const color = colors[signal] || '#3b82f6';
+  
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = (i / (data.length - 1)) * W;
+    const y = H - ((v - min) / range) * (H - 4) - 2;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  
+  // Fill gradient below
+  const lastX = W;
+  const lastY = H - ((data[data.length - 1] - min) / range) * (H - 4) - 2;
+  ctx.lineTo(lastX, H);
+  ctx.lineTo(0, H);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, color + '30');
+  grad.addColorStop(1, color + '05');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  
+  // Dot at end
+  ctx.beginPath();
+  ctx.arc(lastX, lastY, 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function getFragilityColor(score) {
+  if (score >= 70) return 'var(--red)';
+  if (score >= 40) return 'var(--yellow)';
+  return 'var(--green)';
+}
+
+function renderDashboard(data) {
+  // Update header
+  document.getElementById('updatedAt').textContent = `Last Updated: ${data.updated_at} PT`;
+  
+  // Fragility score
+  const score = data.fragility_score;
+  const scoreEl = document.getElementById('fragilityScore');
+  scoreEl.textContent = score.toFixed(0);
+  scoreEl.style.color = getFragilityColor(score);
+  
+  const bar = document.getElementById('fragilityBar');
+  bar.style.width = `${score}%`;
+  bar.style.background = `linear-gradient(90deg, var(--green), var(--yellow) 40%, var(--red) 75%)`;
+  
+  // Signal counts
+  document.getElementById('greenCount').textContent = data.green_count;
+  document.getElementById('yellowCount').textContent = data.yellow_count;
+  document.getElementById('redCount').textContent = data.red_count;
+  
+  // Extreme banner
+  if (data.extreme_fragility) {
+    document.getElementById('extremeBanner').style.display = 'block';
+  }
+  
+  // Group by category
+  const grouped = {};
+  CATEGORIES_ORDER.forEach(c => grouped[c] = []);
+  data.indicators.forEach(ind => {
+    const cat = ind.category || "Other";
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(ind);
+  });
+  
+  // Render
+  const container = document.getElementById('indicatorsContainer');
+  container.innerHTML = '';
+  
+  CATEGORIES_ORDER.forEach(cat => {
+    const items = grouped[cat];
+    if (!items || items.length === 0) return;
+    
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    
+    const title = document.createElement('div');
+    title.className = 'category-title';
+    title.textContent = cat;
+    section.appendChild(title);
+    
+    const grid = document.createElement('div');
+    grid.className = 'indicators-grid';
+    
+    items.forEach(ind => {
+      const card = document.createElement('div');
+      card.className = `indicator-card signal-${ind.signal}`;
+      
+      const accelVal = ind.acceleration || 0;
+      const accelArrow = accelVal > 0.01 ? '↑' : accelVal < -0.01 ? '↓' : '→';
+      const accelColor = accelVal > 0.01 ? 'var(--red)' : accelVal < -0.01 ? 'var(--green)' : 'var(--text-muted)';
+      
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-name">${ind.name}</div>
+          <div class="card-signal ${ind.signal}"></div>
+        </div>
+        <div class="card-value ${ind.signal}">${ind.display}</div>
+        <div class="sparkline-container">
+          <canvas class="sparkline-canvas" data-sparkline='${JSON.stringify(ind.sparkline)}' data-signal="${ind.signal}"></canvas>
+        </div>
+        <div class="percentile-container">
+          <div class="percentile-label">
+            <span>0%</span>
+            <span>Percentile: ${ind.percentile.toFixed(0)}%</span>
+            <span>100%</span>
+          </div>
+          <div class="percentile-bar-bg">
+            <div class="percentile-marker" style="left:${ind.percentile}%; background:${ind.signal === 'red' ? 'var(--red)' : ind.signal === 'yellow' ? 'var(--yellow)' : 'var(--green)'}"></div>
+          </div>
+        </div>
+        <div class="acceleration">
+          <span class="accel-arrow" style="color:${accelColor}">${accelArrow}</span>
+          Acceleration: ${accelVal > 0 ? '+' : ''}${accelVal.toFixed(4)}
+        </div>
+        <div class="card-description">${ind.description}</div>
+      `;
+      
+      grid.appendChild(card);
+    });
+    
+    section.appendChild(grid);
+    container.appendChild(section);
+  });
+  
+  // Draw sparklines
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.sparkline-canvas').forEach(canvas => {
+      try {
+        const data = JSON.parse(canvas.dataset.sparkline);
+        const signal = canvas.dataset.signal;
+        drawSparkline(canvas, data, signal);
+      } catch(e) {}
+    });
+  });
+}
+
+// Fetch data
+fetch('data.json?' + Date.now())
+  .then(r => r.json())
+  .then(data => renderDashboard(data))
+  .catch(err => {
+    document.getElementById('indicatorsContainer').innerHTML = `
+      <div class="loading" style="color:var(--red)">
+        Error loading data: ${err.message}<br>
+        <small>Make sure data.json exists and is valid.</small>
+      </div>
+    `;
+  });
+</script>
+
+</body>
+</html>
