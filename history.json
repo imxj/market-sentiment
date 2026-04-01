@@ -1,0 +1,5 @@
+[
+  {"date": "2026-03-30", "fragility_score": 41.2, "red_count": 5, "yellow_count": 4, "green_count": 7},
+  {"date": "2026-03-31", "fragility_score": 26.2, "red_count": 3, "yellow_count": 3, "green_count": 10},
+  {"date": "2026-04-01", "fragility_score": 23.8, "red_count": 1, "yellow_count": 7, "green_count": 8}
+]

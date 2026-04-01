@@ -743,6 +743,33 @@ def main():
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
     
+    # Append to history.json (keep last 30 days, one entry per date)
+    history_path = "/home/ubuntu/market-sentiment/history.json"
+    try:
+        with open(history_path, 'r') as f:
+            history = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        history = []
+    
+    today_str = datetime.datetime.now().strftime("%Y-%m-%d")
+    # Remove existing entry for today (keep latest)
+    history = [h for h in history if h.get('date') != today_str]
+    history.append({
+        "date": today_str,
+        "fragility_score": fragility,
+        "red_count": red_count,
+        "yellow_count": yellow_count,
+        "green_count": green_count
+    })
+    # Sort by date and keep last 30
+    history.sort(key=lambda x: x['date'])
+    history = history[-30:]
+    
+    with open(history_path, 'w') as f:
+        json.dump(history, f, indent=2)
+    
+    print(f"History updated: {len(history)} entries")
+    
     print(f"\n{'=' * 60}")
     print(f"Results: {green_count} 🟢 | {yellow_count} 🟡 | {red_count} 🔴")
     print(f"Fragility Score: {fragility}/100")

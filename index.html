@@ -415,6 +415,15 @@ body {
     </div>
   </div>
 
+  <!-- 30-Day Fragility Trend -->
+  <div class="fragility-section" id="trendSection" style="display:none; padding: 24px 24px 16px;">
+    <div class="fragility-label" style="margin-bottom: 16px;">30-Day Fragility Trend</div>
+    <div id="trendChart" style="position:relative; height:200px; max-width:800px; margin:0 auto;">
+      <canvas id="trendCanvas" style="width:100%;height:100%;"></canvas>
+    </div>
+    <div id="trendTooltip" style="display:none; position:absolute; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; font-size:0.75rem; color:var(--text-primary); pointer-events:none; z-index:10; white-space:nowrap;"></div>
+  </div>
+
   <div id="indicatorsContainer">
     <div class="loading">
       <div class="loading-spinner"></div>
@@ -623,6 +632,160 @@ fetch('data.json?' + Date.now())
       </div>
     `;
   });
+
+// Fetch history and render trend
+fetch('history.json?' + Date.now())
+  .then(r => r.json())
+  .then(history => {
+    if (!history || history.length < 2) return;
+    document.getElementById('trendSection').style.display = 'block';
+    renderTrendChart(history);
+  })
+  .catch(() => {});
+
+function renderTrendChart(history) {
+  const canvas = document.getElementById('trendCanvas');
+  const container = document.getElementById('trendChart');
+  const tooltip = document.getElementById('trendTooltip');
+  const dpr = window.devicePixelRatio || 1;
+  const W = container.offsetWidth;
+  const H = container.offsetHeight;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  
+  const pad = {top: 20, right: 20, bottom: 36, left: 44};
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+  
+  const scores = history.map(h => h.fragility_score);
+  const maxScore = Math.max(100, ...scores);
+  const minScore = 0;
+  
+  function x(i) { return pad.left + (i / (history.length - 1)) * cw; }
+  function y(v) { return pad.top + (1 - (v - minScore) / (maxScore - minScore)) * ch; }
+  
+  // Background zones
+  // Green zone 0-25
+  ctx.fillStyle = 'rgba(16, 185, 129, 0.06)';
+  ctx.fillRect(pad.left, y(25), cw, y(0) - y(25));
+  // Yellow zone 25-50
+  ctx.fillStyle = 'rgba(245, 158, 11, 0.06)';
+  ctx.fillRect(pad.left, y(50), cw, y(25) - y(50));
+  // Red zone 50-75
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.04)';
+  ctx.fillRect(pad.left, y(75), cw, y(50) - y(75));
+  // Extreme zone 75-100
+  ctx.fillStyle = 'rgba(239, 68, 68, 0.08)';
+  ctx.fillRect(pad.left, y(100), cw, y(75) - y(100));
+  
+  // Grid lines
+  ctx.strokeStyle = '#1e293b';
+  ctx.lineWidth = 1;
+  [0, 25, 50, 75, 100].forEach(v => {
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(pad.left, y(v));
+    ctx.lineTo(W - pad.right, y(v));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    // Labels
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText(v.toString(), pad.left - 8, y(v) + 3);
+  });
+  
+  // Zone labels on right
+  ctx.fillStyle = '#10b98140';
+  ctx.font = '9px monospace';
+  ctx.textAlign = 'right';
+  ctx.fillText('LOW', W - pad.right - 4, y(12));
+  ctx.fillStyle = '#f59e0b40';
+  ctx.fillText('MODERATE', W - pad.right - 4, y(37));
+  ctx.fillStyle = '#ef444440';
+  ctx.fillText('HIGH', W - pad.right - 4, y(62));
+  ctx.fillStyle = '#ef444460';
+  ctx.fillText('EXTREME', W - pad.right - 4, y(87));
+  
+  // Date labels
+  ctx.fillStyle = '#64748b';
+  ctx.font = '10px monospace';
+  ctx.textAlign = 'center';
+  const step = Math.max(1, Math.floor(history.length / 6));
+  history.forEach((h, i) => {
+    if (i % step === 0 || i === history.length - 1) {
+      const d = h.date.slice(5); // MM-DD
+      ctx.fillText(d, x(i), H - pad.bottom + 18);
+    }
+  });
+  
+  // Gradient fill under line
+  const grad = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
+  grad.addColorStop(0, 'rgba(239, 68, 68, 0.25)');
+  grad.addColorStop(0.5, 'rgba(245, 158, 11, 0.15)');
+  grad.addColorStop(1, 'rgba(16, 185, 129, 0.05)');
+  
+  ctx.beginPath();
+  history.forEach((h, i) => {
+    if (i === 0) ctx.moveTo(x(i), y(h.fragility_score));
+    else ctx.lineTo(x(i), y(h.fragility_score));
+  });
+  ctx.lineTo(x(history.length - 1), y(0));
+  ctx.lineTo(x(0), y(0));
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+  
+  // Line
+  ctx.beginPath();
+  history.forEach((h, i) => {
+    if (i === 0) ctx.moveTo(x(i), y(h.fragility_score));
+    else ctx.lineTo(x(i), y(h.fragility_score));
+  });
+  ctx.strokeStyle = '#3b82f6';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+  
+  // Dots
+  history.forEach((h, i) => {
+    const color = h.fragility_score >= 70 ? '#ef4444' : h.fragility_score >= 40 ? '#f59e0b' : '#10b981';
+    ctx.beginPath();
+    ctx.arc(x(i), y(h.fragility_score), i === history.length - 1 ? 5 : 3, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    if (i === history.length - 1) {
+      ctx.strokeStyle = '#0a0e17';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+  
+  // Hover tooltip
+  canvas.addEventListener('mousemove', function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    let closest = -1, minDist = 999;
+    history.forEach((h, i) => {
+      const dist = Math.abs(x(i) - mx);
+      if (dist < minDist) { minDist = dist; closest = i; }
+    });
+    if (closest >= 0 && minDist < 30) {
+      const h = history[closest];
+      tooltip.style.display = 'block';
+      tooltip.style.left = (x(closest) + container.offsetLeft + 12) + 'px';
+      tooltip.style.top = (y(h.fragility_score) + container.offsetTop - 20) + 'px';
+      tooltip.innerHTML = `<strong>${h.date}</strong><br>Score: ${h.fragility_score}<br>🔴${h.red_count} 🟡${h.yellow_count} 🟢${h.green_count}`;
+    } else {
+      tooltip.style.display = 'none';
+    }
+  });
+  canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+}
 </script>
 
 </body>
