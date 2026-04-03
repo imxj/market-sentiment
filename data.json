@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-04-03 14:00:40",
-  "updated_at_iso": "2026-04-03T14:00:40.191656",
+  "updated_at": "2026-04-03 19:30:21",
+  "updated_at_iso": "2026-04-03T19:30:21.047848",
   "fragility_score": 17.5,
   "red_count": 0,
   "yellow_count": 7,
@@ -442,8 +442,8 @@
       "id": "margin_debt",
       "name": "Leverage Activity Trend",
       "category": "Leverage & Positioning",
-      "value": 7.9,
-      "display": "+7.9% (20d)",
+      "value": 8.0,
+      "display": "+8.0% (20d)",
       "signal": "yellow",
       "percentile": 57.9,
       "sparkline": [
@@ -476,9 +476,9 @@
         12.3561,
         7.2758,
         8.3095,
-        7.9484
+        7.9801
       ],
-      "acceleration": -3.0708,
+      "acceleration": -3.039,
       "description": "Combined TQQQ+SQQQ volume momentum as leverage proxy. Rising fast = overheating."
     },
     {
