@@ -743,7 +743,7 @@ def main():
     with open(output_path, 'w') as f:
         json.dump(data, f, indent=2)
     
-    # Append to history.json (keep last 30 days, one entry per date)
+    # Append to history.json (keep ALL data, one entry per date)
     history_path = "/home/ubuntu/market-sentiment/history.json"
     try:
         with open(history_path, 'r') as f:
@@ -763,7 +763,7 @@ def main():
     })
     # Sort by date and keep last 30
     history.sort(key=lambda x: x['date'])
-    history = history[-30:]
+    # No limit — keep all historical data
     
     with open(history_path, 'w') as f:
         json.dump(history, f, indent=2)
