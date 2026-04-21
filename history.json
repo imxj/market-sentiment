@@ -110,5 +110,12 @@
     "red_count": 2,
     "yellow_count": 7,
     "green_count": 7
+  },
+  {
+    "date": "2026-04-21",
+    "fragility_score": 32.5,
+    "red_count": 2,
+    "yellow_count": 8,
+    "green_count": 6
   }
 ]
