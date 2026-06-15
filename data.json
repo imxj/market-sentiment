@@ -1,10 +1,10 @@
 {
-  "updated_at": "2026-06-12 14:00:17",
-  "updated_at_iso": "2026-06-12T14:00:17.499148",
-  "fragility_score": 15.0,
-  "red_count": 0,
-  "yellow_count": 6,
-  "green_count": 10,
+  "updated_at": "2026-06-15 14:00:16",
+  "updated_at_iso": "2026-06-15T14:00:16.081329",
+  "fragility_score": 25.0,
+  "red_count": 2,
+  "yellow_count": 5,
+  "green_count": 9,
   "total_indicators": 16,
   "extreme_fragility": false,
   "indicators": [
@@ -12,12 +12,11 @@
       "id": "vix_level",
       "name": "VIX Level",
       "category": "Volatility & Fear",
-      "value": 19.74,
-      "display": "19.74",
+      "value": 16.34,
+      "display": "16.34",
       "signal": "yellow",
-      "percentile": 76.6,
+      "percentile": 30.6,
       "sparkline": [
-        18.29,
         17.38,
         17.39,
         17.08,
@@ -46,21 +45,21 @@
         19.87,
         22.22,
         19.44,
-        19.74
+        17.68,
+        16.34
       ],
-      "acceleration": 2.89,
+      "acceleration": -2.29,
       "description": "CBOE Volatility Index. <15 calm, 15-25 normal, >25 fear. Rapid spikes from low = max fragility."
     },
     {
       "id": "vix_term",
       "name": "VIX Term Structure",
       "category": "Volatility & Fear",
-      "value": 0.9143,
-      "display": "0.914 (Contango)",
-      "signal": "yellow",
-      "percentile": 75.8,
+      "value": 0.8303,
+      "display": "0.830 (Contango)",
+      "signal": "green",
+      "percentile": 19.4,
       "sparkline": [
-        0.8341,
         0.8689,
         0.8348,
         0.8454,
@@ -89,21 +88,21 @@
         0.9324,
         0.9707,
         0.9076,
-        0.9143
+        0.862,
+        0.8303
       ],
-      "acceleration": 0.0825,
+      "acceleration": -0.0541,
       "description": "VIX/VIX3M ratio. >1 = backwardation (fear), <1 = contango (calm). Inversion signals acute stress."
     },
     {
       "id": "put_call",
       "name": "Put/Call Ratio (Proxy)",
       "category": "Volatility & Fear",
-      "value": 1.1097,
-      "display": "1.110",
+      "value": 1.0402,
+      "display": "1.040",
       "signal": "green",
-      "percentile": 98.8,
+      "percentile": 98.0,
       "sparkline": [
-        0.687,
         0.726,
         0.7686,
         0.8208,
@@ -131,22 +130,22 @@
         1.0277,
         1.0945,
         1.1401,
-        1.144,
-        1.1097
+        1.1439,
+        1.099,
+        1.0402
       ],
-      "acceleration": -0.0623,
+      "acceleration": -0.1256,
       "description": "SQQQ/TQQQ volume ratio as put/call proxy. High = fear (contrarian bullish), Low = complacency (danger)."
     },
     {
       "id": "skew",
       "name": "SKEW Index",
       "category": "Volatility & Fear",
-      "value": 142.98,
-      "display": "143.0",
+      "value": 142.6,
+      "display": "142.6",
       "signal": "green",
-      "percentile": 31.3,
+      "percentile": 29.4,
       "sparkline": [
-        143.33,
         141.38,
         141.74,
         138.74,
@@ -175,21 +174,21 @@
         145.0,
         141.97,
         143.08,
-        142.98
+        142.98,
+        142.6
       ],
-      "acceleration": -10.2,
+      "acceleration": 6.87,
       "description": "CBOE SKEW measures tail risk hedging demand. High = institutions buying crash protection."
     },
     {
       "id": "credit_spread",
       "name": "Credit Spreads (HY-IG)",
       "category": "Credit & Bonds",
-      "value": 1.3618,
-      "display": "1.362 LQD/HYG",
+      "value": 1.3638,
+      "display": "1.364 LQD/HYG",
       "signal": "green",
-      "percentile": 8.3,
+      "percentile": 11.9,
       "sparkline": [
-        1.3583,
         1.3583,
         1.3613,
         1.364,
@@ -218,21 +217,21 @@
         1.3616,
         1.361,
         1.3645,
-        1.3618
+        1.3636,
+        1.3638
       ],
-      "acceleration": 0.0006,
+      "acceleration": -0.0029,
       "description": "LQD/HYG ratio as credit spread proxy. Rising = stress widening. Falling = calm."
     },
     {
       "id": "yield_curve",
       "name": "Yield Curve (10Y-2Y)",
       "category": "Credit & Bonds",
-      "value": 0.623,
-      "display": "+0.62% (Normal)",
+      "value": 0.647,
+      "display": "+0.65% (Normal)",
       "signal": "green",
-      "percentile": 61.5,
+      "percentile": 69.0,
       "sparkline": [
-        0.507,
         0.562,
         0.646,
         0.616,
@@ -261,21 +260,21 @@
         0.712,
         0.688,
         0.702,
-        0.623
+        0.623,
+        0.647
       ],
-      "acceleration": -0.138,
+      "acceleration": 0.008,
       "description": "10Y minus 2Y Treasury spread. Negative = inversion = recession signal. Steepening after inversion can also signal stress."
     },
     {
       "id": "tlt_momentum",
       "name": "TLT Momentum (20d)",
       "category": "Credit & Bonds",
-      "value": 1.1,
-      "display": "+1.10%",
-      "signal": "yellow",
-      "percentile": 64.7,
+      "value": 3.21,
+      "display": "+3.21%",
+      "signal": "red",
+      "percentile": 88.9,
       "sparkline": [
-        -0.9954,
         -1.5883,
         -1.0325,
         -0.6007,
@@ -304,21 +303,21 @@
         -0.1229,
         0.2634,
         1.7903,
-        1.0968
+        1.3982,
+        3.2108
       ],
-      "acceleration": 0.3176,
+      "acceleration": 0.6261,
       "description": "20-day rate of change of TLT (long bonds). Positive = flight to safety. Negative = risk-on."
     },
     {
       "id": "breadth",
       "name": "Market Breadth (RSP/SPY)",
       "category": "Equity Internals",
-      "value": 4.82,
-      "display": "+4.82% (20d)",
+      "value": 4.1,
+      "display": "+4.10% (20d)",
       "signal": "green",
-      "percentile": 99.6,
+      "percentile": 98.0,
       "sparkline": [
-        -4.4088,
         -4.5748,
         -4.329,
         -4.6729,
@@ -347,21 +346,21 @@
         2.8622,
         3.1156,
         4.0033,
-        4.8183
+        4.8227,
+        4.101
       ],
-      "acceleration": 0.5965,
+      "acceleration": -2.0843,
       "description": "Equal-weight vs cap-weight S&P 500 momentum. Negative = narrowing breadth = fragile market."
     },
     {
       "id": "high_low",
       "name": "Distance from 52W High",
       "category": "Equity Internals",
-      "value": -2.97,
-      "display": "-3.0% from high",
-      "signal": "green",
-      "percentile": 10.8,
+      "value": -0.88,
+      "display": "-0.9% from high",
+      "signal": "yellow",
+      "percentile": 39.4,
       "sparkline": [
-        0.0,
         -0.4062,
         0.0,
         0.0,
@@ -390,21 +389,21 @@
         -2.9321,
         -4.5046,
         -2.8316,
-        -2.9651
+        -2.3433,
+        -0.876
       ],
-      "acceleration": -0.4225,
+      "acceleration": 1.7181,
       "description": "S&P 500 distance from 52-week high. Near 0% with low VIX = complacency. Deep negative = correction underway."
     },
     {
       "id": "sp500_rsi",
       "name": "S&P 500 RSI (14d)",
       "category": "Equity Internals",
-      "value": 43.8,
-      "display": "43.8 (Neutral)",
+      "value": 51.5,
+      "display": "51.5 (Neutral)",
       "signal": "green",
-      "percentile": 14.7,
+      "percentile": 29.4,
       "sparkline": [
-        78.5188,
         71.1719,
         71.3228,
         75.2369,
@@ -433,21 +432,21 @@
         52.8262,
         36.7182,
         46.5228,
-        43.8121
+        47.1949,
+        51.4727
       ],
-      "acceleration": -4.9977,
+      "acceleration": 1.6696,
       "description": "14-day RSI of S&P 500. >70 = overbought (reduce exposure), <30 = oversold (potential bounce)."
     },
     {
       "id": "margin_debt",
       "name": "Leverage Activity Trend",
       "category": "Leverage & Positioning",
-      "value": 12.5,
-      "display": "+12.5% (20d)",
-      "signal": "yellow",
-      "percentile": 77.0,
+      "value": 13.9,
+      "display": "+13.9% (20d)",
+      "signal": "red",
+      "percentile": 80.2,
       "sparkline": [
-        -24.2775,
         -22.2312,
         -24.3607,
         -24.8373,
@@ -475,22 +474,22 @@
         2.3517,
         9.4283,
         9.2235,
-        13.8351,
-        12.5475
+        13.9322,
+        17.1333,
+        13.8977
       ],
-      "acceleration": -1.8189,
+      "acceleration": -10.3122,
       "description": "Combined TQQQ+SQQQ volume momentum as leverage proxy. Rising fast = overheating."
     },
     {
       "id": "lev_etf_ratio",
       "name": "Bull/Bear ETF Ratio",
       "category": "Leverage & Positioning",
-      "value": 0.49,
-      "display": "49.0% bullish",
+      "value": 0.496,
+      "display": "49.6% bullish",
       "signal": "green",
-      "percentile": 0.8,
+      "percentile": 1.2,
       "sparkline": [
-        0.5857,
         0.5813,
         0.5795,
         0.5735,
@@ -519,21 +518,21 @@
         0.4971,
         0.4878,
         0.4893,
-        0.4901
+        0.4919,
+        0.4961
       ],
-      "acceleration": 0.006,
+      "acceleration": 0.0148,
       "description": "TQQQ/(TQQQ+SQQQ) volume ratio. >70% = extreme bullish (contrarian bearish). <40% = panic."
     },
     {
       "id": "aaii_proxy",
       "name": "Sentiment Momentum",
       "category": "Fund Flows & Sentiment",
-      "value": 3.81,
-      "display": "+3.8%",
-      "signal": "green",
-      "percentile": 49.2,
+      "value": 6.93,
+      "display": "+6.9%",
+      "signal": "yellow",
+      "percentile": 83.3,
       "sparkline": [
-        8.0537,
         7.8796,
         7.9096,
         7.5461,
@@ -562,19 +561,20 @@
         4.4542,
         2.4542,
         3.7459,
-        3.8129
+        4.465,
+        6.9316
       ],
-      "acceleration": -0.3485,
+      "acceleration": 2.6573,
       "description": "Blended 20d/60d SPY momentum as sentiment proxy. Extreme highs = euphoria (danger). Extreme lows = fear (opportunity)."
     },
     {
       "id": "fear_greed",
       "name": "Fear & Greed Composite",
       "category": "Fund Flows & Sentiment",
-      "value": 32.6,
-      "display": "33/100 (Fear)",
+      "value": 55.9,
+      "display": "56/100 (Greed)",
       "signal": "yellow",
-      "percentile": 32.6,
+      "percentile": 55.9,
       "sparkline": [],
       "acceleration": 0,
       "description": "Composite of VIX, RSI, breadth, put/call, term structure. 0=Extreme Fear, 100=Extreme Greed."
@@ -583,12 +583,11 @@
       "id": "gold_spy",
       "name": "Gold/SPY Ratio Momentum",
       "category": "Fund Flows & Sentiment",
-      "value": -8.65,
-      "display": "-8.65% (20d)",
+      "value": -5.98,
+      "display": "-5.98% (20d)",
       "signal": "green",
-      "percentile": 7.5,
+      "percentile": 21.4,
       "sparkline": [
-        -10.315,
         -11.0052,
         -11.7746,
         -8.6361,
@@ -617,21 +616,21 @@
         -9.8187,
         -11.9572,
         -9.709,
-        -8.647
+        -8.7368,
+        -5.9786
       ],
-      "acceleration": 0.7221,
+      "acceleration": 3.964,
       "description": "GLD/SPY 20-day momentum. Rising = risk-off rotation into gold. Falling = risk appetite."
     },
     {
       "id": "usd_strength",
       "name": "USD Strength (DXY proxy)",
       "category": "Macro",
-      "value": 1.3,
-      "display": "+1.30% (20d)",
+      "value": 0.46,
+      "display": "+0.46% (20d)",
       "signal": "yellow",
-      "percentile": 72.2,
+      "percentile": 50.8,
       "sparkline": [
-        -1.6152,
         -1.2576,
         -0.9009,
         -0.6538,
@@ -660,9 +659,10 @@
         2.4132,
         2.1858,
         1.5994,
-        1.3034
+        1.1948,
+        0.4566
       ],
-      "acceleration": -0.5943,
+      "acceleration": -0.6276,
       "description": "UUP 20-day momentum as DXY proxy. Rapid USD rise = financial tightening = stress for risk assets."
     }
   ]
