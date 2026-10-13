@@ -971,5 +971,12 @@
     "red_count": 3,
     "yellow_count": 5,
     "green_count": 8
+  },
+  {
+    "date": "2026-10-13",
+    "fragility_score": 33.8,
+    "red_count": 3,
+    "yellow_count": 6,
+    "green_count": 7
   }
 ]
